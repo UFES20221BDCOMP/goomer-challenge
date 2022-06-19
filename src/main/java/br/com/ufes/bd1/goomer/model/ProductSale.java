@@ -24,6 +24,9 @@ public class ProductSale {
     private BigDecimal price;
 
     @OneToMany
-    @JoinTable(name = "sale_validity_period")
-    private List<Timespan> timespan;
+    @JoinTable(
+            name = "sale_validity_period",
+            joinColumns = @JoinColumn(name = "sale_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "timespan_id", unique = true, nullable = false))
+    private List<Timespan> saleValidityPeriods;
 }

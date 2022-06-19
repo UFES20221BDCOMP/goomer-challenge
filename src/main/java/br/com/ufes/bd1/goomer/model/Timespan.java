@@ -1,6 +1,5 @@
 package br.com.ufes.bd1.goomer.model;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 

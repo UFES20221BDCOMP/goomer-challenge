@@ -23,12 +23,15 @@ public class Restaurant {
     private String imagePath;
 
     @OneToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id", nullable = false, unique = true)
     private Address address;
 
     @OneToMany
-    @JoinTable(name = "restaurant_business_hours")
-    private List<Timespan> timespan;
+    @JoinTable(
+            name = "restaurant_business_hours",
+            joinColumns = @JoinColumn(name = "restaurant_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "timespan_id", unique = true, nullable = false))
+    private List<Timespan> businessHours;
 
 
     @Transient

@@ -34,6 +34,6 @@ public class Product {
     private Restaurant restaurant;
 
     @OneToOne
-    @JoinColumn(name = "sale_id", nullable = false)
+    @JoinColumn(name = "sale_id")
     private ProductSale sale;
 }
