@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter @Setter
 @Entity
@@ -26,12 +24,8 @@ public class Timespan {
     private Weekday weekdayEnd;
 
     @Column(name = "time_start", columnDefinition = "VARCHAR(5)", nullable = false)
-    private LocalTime timeStart;
+    private String timeStart;
 
     @Column(name = "time_end", columnDefinition = "VARCHAR(5)", nullable = false)
-    private LocalTime timeEnd;
-
-
-    @Transient
-    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private String timeEnd;
 }

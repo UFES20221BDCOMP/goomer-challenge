@@ -5,10 +5,12 @@ import br.com.ufes.bd1.goomer.repository.TimespanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 public class TimespanRepositoryImpl implements TimespanRepository {
 
+    @PersistenceContext
     private final EntityManager entityManager;
 
 
@@ -19,14 +21,13 @@ public class TimespanRepositoryImpl implements TimespanRepository {
 
     @Override
     public Integer save(Timespan timespan) {
-        String sql = "insert into timespan (weekday_start, weekday_end, time_start, time_end) " +
-                "values (?, ?, ?, ?) returning id";
+        String sql = "insert into timespan (weekday_start, weekday_end, time_start, time_end) values (?, ?, ?, ?) returning id";
 
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter(1, timespan.getWeekdayStart().name());
         query.setParameter(2, timespan.getWeekdayEnd().name());
-        query.setParameter(3, timespan.getTimeStart().format(Timespan.TIME_FORMATTER));
-        query.setParameter(4, timespan.getTimeEnd().format(Timespan.TIME_FORMATTER));
+        query.setParameter(3, timespan.getTimeStart());
+        query.setParameter(4, timespan.getTimeEnd());
 
         return (Integer) query.getSingleResult();
     }

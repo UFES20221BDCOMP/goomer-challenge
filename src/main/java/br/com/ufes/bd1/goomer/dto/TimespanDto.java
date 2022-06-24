@@ -5,6 +5,7 @@ import br.com.ufes.bd1.goomer.model.Weekday;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class TimespanDto {
 
@@ -16,19 +17,31 @@ public class TimespanDto {
 
 
     public Timespan toEntity() {
-        String[] daysArray = days.split("-");
-        Weekday weekdayStart = Weekday.fromName(daysArray[0]);
-        Weekday weekdayEnd = Weekday.fromName(daysArray[1]);
-
-        String[] timeArray = time.split("-");
-        String timeStart = timeArray[0];
-        String timeEnd = timeArray[1];
-
         Timespan timespan = new Timespan();
-        timespan.setWeekdayStart(weekdayStart);
-        timespan.setWeekdayEnd(weekdayEnd);
-        timespan.setTimeStart(LocalTime.parse(timeStart));
-        timespan.setTimeEnd(LocalTime.parse(timeEnd));
+
+        try {
+            String[] daysArray = days.split("-");
+            Weekday weekdayStart = Weekday.fromName(daysArray[0]);
+            Weekday weekdayEnd = Weekday.fromName(daysArray[1]);
+
+            timespan.setWeekdayStart(weekdayStart);
+            timespan.setWeekdayEnd(weekdayEnd);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Invalid 'days' format");
+        }
+
+        try {
+            String[] timeArray = time.split("-");
+            LocalTime.parse(timeArray[0], DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime.parse(timeArray[1], DateTimeFormatter.ofPattern("HH:mm"));
+
+            timespan.setTimeStart(timeArray[0]);
+            timespan.setTimeEnd(timeArray[1]);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Invalid time format");
+        }
 
         return timespan;
     }
@@ -36,7 +49,7 @@ public class TimespanDto {
     public static TimespanDto fromEntity(Timespan timespan) {
         TimespanDto timespanDto = new TimespanDto();
         timespanDto.days = timespan.getWeekdayStart().getName() + "-" + timespan.getWeekdayEnd().getName();
-        timespanDto.time = timespan.getTimeStart().format(Timespan.TIME_FORMATTER) + "-" + timespan.getTimeEnd().format(Timespan.TIME_FORMATTER);
+        timespanDto.time = timespan.getTimeStart() + "-" + timespan.getTimeEnd();
         return timespanDto;
     }
 }

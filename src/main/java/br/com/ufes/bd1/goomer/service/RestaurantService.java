@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 @Service
 public class RestaurantService {
 
@@ -41,6 +43,10 @@ public class RestaurantService {
 
     public Restaurant getById(int id) {
         return restaurantRepository.getById(id);
+    }
+
+    public Collection<Restaurant> getAll() {
+        return restaurantRepository.getAll();
     }
 
 }
