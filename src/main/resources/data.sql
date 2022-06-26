@@ -1,0 +1,10 @@
+insert into product_category (id, name) values (1, 'BEBIDAS');
+insert into product_category (id, name) values (2, 'ENTRADAS');
+insert into product_category (id, name) values (3, 'SALADAS');
+insert into product_category (id, name) values (4, 'SOBREMESAS');
+insert into product_category (id, name) values (5, 'PORÇÕES');
+insert into product_category (id, name) values (6, 'PRATOS PRINCIPAIS');
+insert into product_category (id, name) values (7, 'MOLHOS');
+insert into product_category (id, name) values (8, 'PRATOS FRIOS');
+insert into product_category (id, name) values (9, 'MASSAS');
+insert into product_category (id, name) values (10, 'APERITIVOS');
