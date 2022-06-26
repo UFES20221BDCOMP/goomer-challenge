@@ -21,4 +21,6 @@ public interface RestaurantRepository extends org.springframework.data.repositor
     void deleteBusinessHours(int restaurantId, int timespanId);
 
     void deleteAllBusinessHours(int restaurantId);
+
+    void update(Restaurant restaurant);
 }

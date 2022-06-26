@@ -39,4 +39,19 @@ public class AddressRepositoryImpl implements AddressRepository {
         query.setParameter(1, id);
         query.executeUpdate();
     }
+
+    @Override
+    public void update(Address address){
+        String sql = "update address set address_line = ?, neighborhood = ?, city = ?, state = ?, zip_code = ? where id = ?";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, address.getAddressLine());
+        query.setParameter(2, address.getNeighborhood());
+        query.setParameter(3, address.getCity());
+        query.setParameter(4, address.getState());
+        query.setParameter(5, address.getZipCode());
+        query.setParameter(6, address.getId());
+
+        query.executeUpdate();
+    }
 }
