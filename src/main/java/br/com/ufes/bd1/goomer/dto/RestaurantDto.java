@@ -2,24 +2,36 @@ package br.com.ufes.bd1.goomer.dto;
 
 import br.com.ufes.bd1.goomer.model.Restaurant;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 public class RestaurantDto {
 
     @JsonProperty("id")
     private Integer id;
 
+    @NotBlank(message = "restaurant name must be provided")
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("image_path")
     private String imagePath;
 
+    @Valid
+    @NotNull(message = "restaurant address must be provided")
     @JsonProperty("address")
     private AddressDto address;
 
+    @Valid
+    @NotNull(message = "restaurant business hours must be provided")
+    @NotEmpty(message = "restaurant business hours must not be empty")
     @JsonProperty("business_hours")
     private List<TimespanDto> businessHours;
 
