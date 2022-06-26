@@ -31,11 +31,24 @@ public class TimespanRepositoryImpl implements TimespanRepository {
     }
 
     @Override
-    public void deleteById(int id){
+    public void deleteById(Integer id){
         String sql = "delete from timespan t where t.id = ?";
         
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter(1, id);
+        query.executeUpdate();
+    }
+    
+    @Override
+    public void update(Timespan timespan){
+        String sql = "update timespan set weekday_start = ?, weekday_end = ?, time_start = ?, time_end = ?";
+        
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, timespan.getWeekdayStart().name());
+        query.setParameter(2, timespan.getWeekdayEnd().name());
+        query.setParameter(3, timespan.getTimeStart());
+        query.setParameter(4, timespan.getTimeEnd());
+
         query.executeUpdate();
     }
 }

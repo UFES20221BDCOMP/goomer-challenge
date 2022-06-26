@@ -9,4 +9,6 @@ public interface AddressRepository extends org.springframework.data.repository.R
     Integer save(Address address);
 
     void deleteById(int id);
+
+    public void update(Address address);
 }

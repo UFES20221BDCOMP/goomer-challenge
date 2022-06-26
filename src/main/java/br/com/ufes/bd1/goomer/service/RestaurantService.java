@@ -2,6 +2,7 @@ package br.com.ufes.bd1.goomer.service;
 
 import br.com.ufes.bd1.goomer.model.Address;
 import br.com.ufes.bd1.goomer.model.Restaurant;
+import br.com.ufes.bd1.goomer.model.Timespan;
 import br.com.ufes.bd1.goomer.repository.AddressRepository;
 import br.com.ufes.bd1.goomer.repository.RestaurantRepository;
 import br.com.ufes.bd1.goomer.repository.TimespanRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class RestaurantService {
@@ -50,6 +52,45 @@ public class RestaurantService {
     }
 
     @Transactional
+    public void update(Restaurant updated) {
+        Restaurant original = restaurantRepository.getById(updated.getId());
+
+        updated.getAddress().setId(original.getAddress().getId());
+
+        if (!original.equals(updated)) {
+            restaurantRepository.update(updated);
+        }
+        if (!original.getAddress().equals(updated.getAddress())) {
+            addressRepository.update(updated.getAddress());
+        }
+
+        List<Timespan> originalBusinessHours = original.getBusinessHours();
+        List<Timespan> updatedBusinessHours = updated.getBusinessHours();
+
+        if (!compareBusinessHours(originalBusinessHours, updatedBusinessHours)) {
+            if (!originalBusinessHours.isEmpty()) {
+                restaurantRepository.deleteAllBusinessHours(original.getId());
+            }
+            updatedBusinessHours.forEach(timespan -> {
+                timespan.setId(timespanRepository.save(timespan));
+                restaurantRepository.saveBusinessHours(updated.getId(), timespan.getId());
+            });
+        }
+    }
+
+    private boolean compareBusinessHours(List<Timespan> originalBusinessHours, List<Timespan> updatedBusinessHours) {
+        if (originalBusinessHours.size() != updatedBusinessHours.size()) {
+            return false;
+        }
+        for (int i = 0; i < originalBusinessHours.size(); i++) {
+            if (!originalBusinessHours.get(i).equals(updatedBusinessHours.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Transactional
     public void deleteById(Integer id) {
         Restaurant restaurant = restaurantRepository.getById(id);
 
@@ -59,6 +100,5 @@ public class RestaurantService {
 
         addressRepository.deleteById(restaurant.getAddress().getId());
     }
-
 
 }

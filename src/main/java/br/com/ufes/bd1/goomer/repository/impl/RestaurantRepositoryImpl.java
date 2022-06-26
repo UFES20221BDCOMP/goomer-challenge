@@ -114,4 +114,17 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
         return new TimespanRepositoryImpl(entityManager);
     }
 
+    @Override
+    public void update(Restaurant restaurant) {
+        String sql = "update restaurant set name = ?, image_path = ?, address_id = ? where id = ?";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, restaurant.getName());
+        query.setParameter(2, restaurant.getImagePath());
+        query.setParameter(3, restaurant.getAddress().getId());
+        query.setParameter(4, restaurant.getId());
+
+        query.executeUpdate();
+    }
+
 }
