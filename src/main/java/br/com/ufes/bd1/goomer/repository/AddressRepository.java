@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 public interface AddressRepository extends org.springframework.data.repository.Repository<Address, Integer> {
 
     Integer save(Address address);
+
+    void deleteById(int id);
 }

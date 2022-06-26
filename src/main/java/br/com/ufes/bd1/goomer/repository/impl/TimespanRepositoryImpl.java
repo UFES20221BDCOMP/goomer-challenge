@@ -5,12 +5,10 @@ import br.com.ufes.bd1.goomer.repository.TimespanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 public class TimespanRepositoryImpl implements TimespanRepository {
 
-    @PersistenceContext
     private final EntityManager entityManager;
 
 
@@ -30,5 +28,14 @@ public class TimespanRepositoryImpl implements TimespanRepository {
         query.setParameter(4, timespan.getTimeEnd());
 
         return (Integer) query.getSingleResult();
+    }
+
+    @Override
+    public void deleteById(int id){
+        String sql = "delete from timespan t where t.id = ?";
+        
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, id);
+        query.executeUpdate();
     }
 }

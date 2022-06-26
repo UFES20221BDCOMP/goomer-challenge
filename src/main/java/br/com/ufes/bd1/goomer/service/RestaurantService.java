@@ -49,4 +49,16 @@ public class RestaurantService {
         return restaurantRepository.getAll();
     }
 
+    @Transactional
+    public void deleteById(Integer id) {
+        Restaurant restaurant = restaurantRepository.getById(id);
+
+        restaurantRepository.deleteAllBusinessHours(restaurant.getId());
+
+        restaurantRepository.deleteById(restaurant.getId());
+
+        addressRepository.deleteById(restaurant.getAddress().getId());
+    }
+
+
 }

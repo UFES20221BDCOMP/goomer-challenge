@@ -30,4 +30,13 @@ public class AddressRepositoryImpl implements AddressRepository {
 
         return (Integer) query.getSingleResult();
     }
+
+    @Override
+    public void deleteById(int id){
+        String sql = "delete from address a where a.id = ? ";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, id);
+        query.executeUpdate();
+    }
 }
