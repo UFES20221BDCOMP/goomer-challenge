@@ -2,16 +2,23 @@ package br.com.ufes.bd1.goomer.dto;
 
 import br.com.ufes.bd1.goomer.model.Timespan;
 import br.com.ufes.bd1.goomer.model.Weekday;
+import br.com.ufes.bd1.goomer.validation.TimeIntervalFormat;
+import br.com.ufes.bd1.goomer.validation.WeekdaysIntervalFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import javax.validation.constraints.NotBlank;
 
+@Getter
 public class TimespanDto {
 
+    @WeekdaysIntervalFormat(message = "invalid format --must be like 'monday-friday'")
+    @NotBlank(message = "weekdays interval must be provided")
     @JsonProperty("days")
     private String days;
 
+    @TimeIntervalFormat(message = "invalid format --expected: 'HH:mm-HH:mm'")
+    @NotBlank(message = "daily timespan must be provided")
     @JsonProperty("time")
     private String time;
 
@@ -19,29 +26,16 @@ public class TimespanDto {
     public Timespan toEntity() {
         Timespan timespan = new Timespan();
 
-        try {
-            String[] daysArray = days.split("-");
-            Weekday weekdayStart = Weekday.fromName(daysArray[0]);
-            Weekday weekdayEnd = Weekday.fromName(daysArray[1]);
+        String[] daysArray = days.split("-");
+        Weekday weekdayStart = Weekday.fromName(daysArray[0]);
+        Weekday weekdayEnd = Weekday.fromName(daysArray[1]);
 
-            timespan.setWeekdayStart(weekdayStart);
-            timespan.setWeekdayEnd(weekdayEnd);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException("Invalid 'days' format");
-        }
+        timespan.setWeekdayStart(weekdayStart);
+        timespan.setWeekdayEnd(weekdayEnd);
 
-        try {
-            String[] timeArray = time.split("-");
-            LocalTime.parse(timeArray[0], DateTimeFormatter.ofPattern("HH:mm"));
-            LocalTime.parse(timeArray[1], DateTimeFormatter.ofPattern("HH:mm"));
-
-            timespan.setTimeStart(timeArray[0]);
-            timespan.setTimeEnd(timeArray[1]);
-        }
-        catch (Exception e) {
-            throw new IllegalArgumentException("Invalid time format");
-        }
+        String[] timeArray = time.split("-");
+        timespan.setTimeStart(timeArray[0]);
+        timespan.setTimeEnd(timeArray[1]);
 
         return timespan;
     }

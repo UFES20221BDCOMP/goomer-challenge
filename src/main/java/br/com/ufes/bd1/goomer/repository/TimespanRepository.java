@@ -10,5 +10,5 @@ public interface TimespanRepository extends org.springframework.data.repository.
 
     void deleteById(Integer id);
 
-    public void update(Timespan timespan);
+    void update(Timespan timespan);
 }
