@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter @Setter
 @Entity
@@ -36,4 +37,24 @@ public class Product {
     @OneToOne
     @JoinColumn(name = "sale_id")
     private ProductSale sale;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        
+        if (!(o instanceof Product)) return false;
+        
+        Product product = (Product) o;
+        
+        return Objects.equals(getId(), product.getId()) && 
+                Objects.equals(getDescription(), product.getDescription()) && 
+                Objects.equals(getPrice(), product.getPrice()) && 
+                Objects.equals(getImagePath(), product.getImagePath()) &&
+                Objects.equals(getProductCategory(), product.getProductCategory());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getDescription(), getPrice(), getImagePath());
+    }
 }

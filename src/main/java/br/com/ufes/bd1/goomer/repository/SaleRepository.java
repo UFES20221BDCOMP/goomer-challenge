@@ -11,4 +11,10 @@ public interface SaleRepository extends org.springframework.data.repository.Repo
     void saveValidityPeriod(int saleId, int timespanId);
 
     void deleteById(int id);
+
+    void deleteSalesValidityPeriod(int saleId, int timespanId);
+
+    void deleteAllSaleValidityPeriods(int saleId);
+
+    void update(ProductSale sale);
 }
