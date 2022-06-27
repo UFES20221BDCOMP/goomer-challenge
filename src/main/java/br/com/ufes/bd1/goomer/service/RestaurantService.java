@@ -38,7 +38,7 @@ public class RestaurantService {
         restaurant.setId(restaurantRepository.save(restaurant));
 
         restaurant.getBusinessHours().forEach(timespan -> {
-            timespan.setId(timespanRepository.save(timespan));
+            timespanRepository.save(timespan);
             restaurantRepository.saveBusinessHours(restaurant.getId(), timespan.getId());
         });
     }
@@ -72,7 +72,7 @@ public class RestaurantService {
                 restaurantRepository.deleteAllBusinessHours(original.getId());
             }
             updatedBusinessHours.forEach(timespan -> {
-                timespan.setId(timespanRepository.save(timespan));
+                timespanRepository.save(timespan);
                 restaurantRepository.saveBusinessHours(updated.getId(), timespan.getId());
             });
         }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TimespanRepository extends org.springframework.data.repository.Repository<Timespan, Integer> {
 
-    Integer save(Timespan timespan);
+    void save(Timespan timespan);
 
     void deleteById(Integer id);
 

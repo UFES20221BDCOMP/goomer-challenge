@@ -1,10 +1,10 @@
 package br.com.ufes.bd1.goomer.service;
 
+import br.com.ufes.bd1.goomer.exception.ProvidedDataInconsistencyException;
 import br.com.ufes.bd1.goomer.model.Product;
+import br.com.ufes.bd1.goomer.model.ProductCategory;
 import br.com.ufes.bd1.goomer.model.ProductSale;
-import br.com.ufes.bd1.goomer.repository.ProductRepository;
-import br.com.ufes.bd1.goomer.repository.SaleRepository;
-import br.com.ufes.bd1.goomer.repository.TimespanRepository;
+import br.com.ufes.bd1.goomer.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,26 +22,40 @@ public class ProductService {
 
     private final TimespanRepository timespanRepository;
 
+    private final RestaurantRepository restaurantRepository;
+
+    private final CategoryRepository categoryRepository;
+
 
     @Autowired
-    public ProductService(ProductRepository productRepository, SaleRepository saleRepository, TimespanRepository timespanRepository) {
+    public ProductService(ProductRepository productRepository, SaleRepository saleRepository,
+                          TimespanRepository timespanRepository, RestaurantRepository restaurantRepository,
+                          CategoryRepository categoryRepository) {
+
         this.productRepository = productRepository;
         this.saleRepository = saleRepository;
         this.timespanRepository = timespanRepository;
+        this.restaurantRepository = restaurantRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional
     public void save(Product product) {
+        restaurantRepository.getById(product.getRestaurant().getId());
+
+        ProductCategory productCategory = categoryRepository.getByName(product.getProductCategory().getName());
+        product.setProductCategory(productCategory);
+
         Optional.ofNullable(product.getSale()).ifPresent(sale -> {
-            sale.setId(saleRepository.save(sale));
+            saleRepository.save(sale);
 
             sale.getSaleValidityPeriods().forEach(timespan -> {
-                timespan.setId(timespanRepository.save(timespan));
+                timespanRepository.save(timespan);
 
                 saleRepository.saveValidityPeriod(sale.getId(), timespan.getId());
             });
         });
-        product.setId(productRepository.save(product));
+        productRepository.save(product);
     }
 
     public Product getById(Integer id) {
@@ -54,7 +68,27 @@ public class ProductService {
 
     @Transactional
     public void update(Product updated) {
+        if (Objects.isNull(updated.getId())) {
+            throw new ProvidedDataInconsistencyException("product id must be provided in order to update");
+        }
+
         Product original = productRepository.getById(updated.getId());
+
+        ProductCategory originalCategory = original.getProductCategory();
+        ProductCategory updatedCategory = updated.getProductCategory();
+
+        if (!originalCategory.getName().equals(updatedCategory.getName())) {
+            updated.setProductCategory(
+                    categoryRepository.getByName(updatedCategory.getName()));
+        }
+        else {
+            updatedCategory.setId(originalCategory.getId());
+        }
+
+        if (!original.getRestaurant().getId().equals(updated.getRestaurant().getId())) {
+            throw new ProvidedDataInconsistencyException("restaurant cannot be changed " +
+                    "--product belongs to another restaurant (id = " + original.getRestaurant().getId() + ")");
+        }
 
         ProductSale originalSale = original.getSale();
         ProductSale updatedSale = updated.getSale();
@@ -68,10 +102,10 @@ public class ProductService {
                 saleRepository.deleteById(originalSale.getId());
             }
             if (Objects.nonNull(updatedSale)) {
-                updatedSale.setId(saleRepository.save(updatedSale));
+                saleRepository.save(updatedSale);
 
                 updatedSale.getSaleValidityPeriods().forEach(timespan -> {
-                    timespan.setId(timespanRepository.save(timespan));
+                    timespanRepository.save(timespan);
                     saleRepository.saveValidityPeriod(updatedSale.getId(), timespan.getId());
                 });
             }

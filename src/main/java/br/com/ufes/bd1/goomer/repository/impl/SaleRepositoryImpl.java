@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -20,61 +21,86 @@ public class SaleRepositoryImpl implements SaleRepository {
     }
 
     @Override
-    public Integer save(ProductSale productSale) {
-        String sql = "insert into product_sale (description, price) values (?, ?) returning id";
+    public void save(ProductSale productSale) {
+        try {
+            String sql = "insert into product_sale (description, price) values (?, ?) returning id";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, productSale.getDescription());
-        query.setParameter(2, productSale.getPrice());
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, productSale.getDescription());
+            query.setParameter(2, productSale.getPrice());
 
-        return (Integer) query.getSingleResult();
+            productSale.setId((Integer) query.getSingleResult());
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error saving sale");
+        }
     }
 
     @Override
     public void saveValidityPeriod(int saleId, int timespanId) {
-        String sql = "insert into sale_validity_period (sale_id, timespan_id) values (?, ?)";
+        try {
+            String sql = "insert into sale_validity_period (sale_id, timespan_id) values (?, ?)";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, saleId);
-        query.setParameter(2, timespanId);
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, saleId);
+            query.setParameter(2, timespanId);
 
-        query.executeUpdate();
+            query.executeUpdate();
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error saving sale validity period");
+        }
     }
 
     @Override
     public void deleteById(int id){
-        String sql = "delete from product_sale where id = ?";
+        try {
+            String sql = "delete from product_sale where id = ?";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, id);
-        query.executeUpdate();
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, id);
+            query.executeUpdate();
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error deleting sale");
+        }
 
     }
 
     @Override
-    public void deleteSalesValidityPeriod(int saleId, int timespanId) {
-        String sql = "delete from sale_validity_period where sale_id = ? and timespan_id = ?";
+    public void deleteSaleValidityPeriod(int saleId, int timespanId) {
+        try{
+            String sql = "delete from sale_validity_period where sale_id = ? and timespan_id = ?";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, saleId);
-        query.setParameter(2, timespanId);
-        query.executeUpdate();
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, saleId);
+            query.setParameter(2, timespanId);
+            query.executeUpdate();
 
-        getTimespanRepository().deleteById(timespanId);
+            getTimespanRepository().deleteById(timespanId);
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error deleting sale validity period");
+        }
     }
 
     @Transactional
     @Override
     public void deleteAllSaleValidityPeriods(int saleId) {
-        String sql = "delete from sale_validity_period where sale_id = ? returning timespan_id";
+        try{
+            String sql = "delete from sale_validity_period where sale_id = ? returning timespan_id";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, saleId);
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, saleId);
 
-        List<Integer> timespanIds = query.getResultList();
+            List<Integer> timespanIds = query.getResultList();
 
-        TimespanRepository timespanRepository = getTimespanRepository();
-        timespanIds.forEach(timespanRepository::deleteById);
+            TimespanRepository timespanRepository = getTimespanRepository();
+            timespanIds.forEach(timespanRepository::deleteById);
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error deleting sale validity periods");
+        }
     }
 
     private TimespanRepository getTimespanRepository() {
@@ -83,11 +109,16 @@ public class SaleRepositoryImpl implements SaleRepository {
 
     @Override
     public void update(ProductSale sale){
-        String sql = "update product_sale set description = ?, price = ? where id = ?";
+        try{
+            String sql = "update product_sale set description = ?, price = ? where id = ?";
 
-        Query query = entityManager.createNativeQuery(sql);
-        query.setParameter(1, sale.getDescription());
-        query.setParameter(2, sale.getPrice());
-        query.executeUpdate();
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, sale.getDescription());
+            query.setParameter(2, sale.getPrice());
+            query.executeUpdate();
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error updating sale");
+        }
     }
 }

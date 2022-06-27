@@ -8,7 +8,7 @@ import java.util.Collection;
 @Repository
 public interface ProductRepository extends org.springframework.data.repository.Repository<Product, Integer> {
 
-    Integer save(Product productSale);
+    void save(Product productSale);
 
     Product getById(int id);
 
