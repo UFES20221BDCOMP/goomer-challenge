@@ -33,7 +33,7 @@ public class TimespanRepositoryImpl implements TimespanRepository {
             timespan.setId((Integer) query.getSingleResult());
         }
         catch (Exception e) {
-            throw new PersistenceException("Error saving timespan", e);
+            throw new PersistenceException("Error saving timespan");
         }
     }
 
@@ -47,7 +47,7 @@ public class TimespanRepositoryImpl implements TimespanRepository {
             query.executeUpdate();
         }
         catch (Exception e) {
-            throw new PersistenceException("Error deleting timespan", e);
+            throw new PersistenceException("Error deleting timespan");
         }
     }
     
