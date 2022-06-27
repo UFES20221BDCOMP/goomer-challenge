@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Getter @Setter
 @Entity
@@ -29,4 +30,22 @@ public class ProductSale {
             joinColumns = @JoinColumn(name = "sale_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "timespan_id", unique = true, nullable = false))
     private List<Timespan> saleValidityPeriods;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        
+        if (!(o instanceof ProductSale)) return false;
+        
+        ProductSale that = (ProductSale) o;
+        
+        return Objects.equals(getDescription(), that.getDescription()) && 
+                Objects.equals(getPrice(), that.getPrice()) &&
+                Objects.equals(getSaleValidityPeriods(), that.getSaleValidityPeriods());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getDescription(), getPrice());
+    }
 }

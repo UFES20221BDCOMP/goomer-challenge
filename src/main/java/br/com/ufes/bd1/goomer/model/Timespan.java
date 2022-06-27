@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalTime;
 
 @Getter @Setter
 @Entity
@@ -24,9 +23,9 @@ public class Timespan {
     @Column(name = "weekday_end", columnDefinition = "VARCHAR(3)", nullable = false)
     private Weekday weekdayEnd;
 
-    @Column(name = "time_start", nullable = false)
-    private LocalTime timeStart;
+    @Column(name = "time_start", columnDefinition = "VARCHAR(5)", nullable = false)
+    private String timeStart;
 
-    @Column(name = "time_end", nullable = false)
-    private LocalTime timeEnd;
+    @Column(name = "time_end", columnDefinition = "VARCHAR(5)", nullable = false)
+    private String timeEnd;
 }
