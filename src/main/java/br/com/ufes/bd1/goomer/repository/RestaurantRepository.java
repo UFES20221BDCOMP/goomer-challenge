@@ -8,7 +8,7 @@ import java.util.Collection;
 @Repository
 public interface RestaurantRepository extends org.springframework.data.repository.Repository<Restaurant, Integer> {
 
-    Integer save(Restaurant restaurant);
+    void save(Restaurant restaurant);
 
     void saveBusinessHours(int restaurantId, int timespanId);
 

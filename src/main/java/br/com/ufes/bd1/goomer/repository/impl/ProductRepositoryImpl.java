@@ -4,6 +4,7 @@ import br.com.ufes.bd1.goomer.exception.ProductDoesNotExistException;
 import br.com.ufes.bd1.goomer.model.Product;
 import br.com.ufes.bd1.goomer.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -11,6 +12,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 
 public class ProductRepositoryImpl implements ProductRepository {
@@ -96,6 +98,26 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    public Collection<Product> getByRestaurantId(int restaurantId) {
+        try {
+            String sql = "select * " +
+                "from product p " +
+                "left join product_sale s on p.sale_id = s.id " +
+                "left join sale_validity_period v on v.sale_id = s.id " +
+                "left join timespan t on t.id = v.timespan_id " +
+                "where p.restaurant_id = ?";
+
+            Query query = entityManager.createNativeQuery(sql, Product.class);
+            query.setParameter(1, restaurantId);
+
+            return new LinkedHashSet<>(query.getResultList());
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error while getting products");
+        }
+    }
+
+    @Override
     public void deleteById(int id) {
         try{
             String sql = "delete from product where id = ?";
@@ -106,6 +128,22 @@ public class ProductRepositoryImpl implements ProductRepository {
         }
         catch (Exception e) {
             throw new PersistenceException("Error deleting product");
+        }
+    }
+
+    @Override
+    public List<Integer> deleteAllByRestaurantId(int restaurantId) {
+        try {
+            String sql = "delete from product where restaurant_id = ? " +
+                    "returning sale_id";
+
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, restaurantId);
+
+            return query.getResultList();
+        }
+        catch (Exception e) {
+            throw new PersistenceException("Error deleting products from restaurant");
         }
     }
 

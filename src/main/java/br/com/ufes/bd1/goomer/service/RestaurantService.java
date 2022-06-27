@@ -1,9 +1,11 @@
 package br.com.ufes.bd1.goomer.service;
 
+import br.com.ufes.bd1.goomer.exception.ProvidedDataInconsistencyException;
 import br.com.ufes.bd1.goomer.model.Address;
 import br.com.ufes.bd1.goomer.model.Restaurant;
 import br.com.ufes.bd1.goomer.model.Timespan;
 import br.com.ufes.bd1.goomer.repository.AddressRepository;
+import br.com.ufes.bd1.goomer.repository.ProductRepository;
 import br.com.ufes.bd1.goomer.repository.RestaurantRepository;
 import br.com.ufes.bd1.goomer.repository.TimespanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class RestaurantService {
@@ -22,20 +25,27 @@ public class RestaurantService {
 
     private final TimespanRepository timespanRepository;
 
+    private final ProductService productService;
+
 
     @Autowired
-    public RestaurantService(RestaurantRepository restaurantRepository, AddressRepository addressRepository, TimespanRepository timespanRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository,
+                             AddressRepository addressRepository,
+                             TimespanRepository timespanRepository,
+                             ProductService productService) {
+
         this.restaurantRepository = restaurantRepository;
         this.addressRepository = addressRepository;
         this.timespanRepository = timespanRepository;
+        this.productService = productService;
     }
 
     @Transactional
     public void save(Restaurant restaurant) {
         Address address = restaurant.getAddress();
-        address.setId(addressRepository.save(address));
+        addressRepository.save(address);
 
-        restaurant.setId(restaurantRepository.save(restaurant));
+        restaurantRepository.save(restaurant);
 
         restaurant.getBusinessHours().forEach(timespan -> {
             timespanRepository.save(timespan);
@@ -53,6 +63,10 @@ public class RestaurantService {
 
     @Transactional
     public void update(Restaurant updated) {
+        if (Objects.isNull(updated.getId())) {
+            throw new ProvidedDataInconsistencyException("Restaurant id must be provided");
+        }
+
         Restaurant original = restaurantRepository.getById(updated.getId());
 
         updated.getAddress().setId(original.getAddress().getId());
@@ -94,9 +108,11 @@ public class RestaurantService {
     public void deleteById(Integer id) {
         Restaurant restaurant = restaurantRepository.getById(id);
 
-        restaurantRepository.deleteAllBusinessHours(restaurant.getId());
+        restaurantRepository.deleteAllBusinessHours(id);
 
-        restaurantRepository.deleteById(restaurant.getId());
+        productService.deleteAllByRestaurantId(id);
+
+        restaurantRepository.deleteById(id);
 
         addressRepository.deleteById(restaurant.getAddress().getId());
     }
