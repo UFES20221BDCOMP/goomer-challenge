@@ -83,7 +83,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 
     @Override
     public void update(ProductSale sale){
-        String sql = "update product_sale set description = ?, price = ?";
+        String sql = "update product_sale set description = ?, price = ? where id = ?";
 
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter(1, sale.getDescription());

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,6 +44,14 @@ public class ProductService {
         product.setId(productRepository.save(product));
     }
 
+    public Product getById(Integer id) {
+        return productRepository.getById(id);
+    }
+
+    public Collection<Product> getAll() {
+        return productRepository.getAll();
+    }
+
     @Transactional
     public void update(Product updated) {
         Product original = productRepository.getById(updated.getId());
@@ -50,15 +59,15 @@ public class ProductService {
         ProductSale originalSale = original.getSale();
         ProductSale updatedSale = updated.getSale();
 
-        if (!original.equals(updated)) {
-            productRepository.update(updated);
-        }
-        if (!compareSales(originalSale, updated.getSale())) {
+        if (!compareSales(originalSale, updatedSale)) {
             if (Objects.nonNull(originalSale)) {
+                original.setSale(null);
+                productRepository.update(original);
+
                 saleRepository.deleteAllSaleValidityPeriods(originalSale.getId());
                 saleRepository.deleteById(originalSale.getId());
             }
-            if (Objects.nonNull(updated.getSale())) {
+            if (Objects.nonNull(updatedSale)) {
                 updatedSale.setId(saleRepository.save(updatedSale));
 
                 updatedSale.getSaleValidityPeriods().forEach(timespan -> {
@@ -67,6 +76,10 @@ public class ProductService {
                 });
             }
         }
+        else if (Objects.nonNull(originalSale)) {
+            updatedSale.setId(originalSale.getId());
+        }
+        productRepository.update(updated);
     }
 
     private boolean compareSales(ProductSale originalSale, ProductSale updatedSale) {
@@ -81,8 +94,11 @@ public class ProductService {
         Product product = productRepository.getById(id);
         ProductSale sale = product.getSale();
 
-        saleRepository.deleteAllSaleValidityPeriods(sale.getId());
-        saleRepository.deleteById(sale.getId());
         productRepository.deleteById(product.getId());
+
+        if (Objects.nonNull(sale)) {
+            saleRepository.deleteAllSaleValidityPeriods(sale.getId());
+            saleRepository.deleteById(sale.getId());
+        }
     }
 }

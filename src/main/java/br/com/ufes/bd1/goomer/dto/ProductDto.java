@@ -6,6 +6,7 @@ import br.com.ufes.bd1.goomer.model.Restaurant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class ProductDto {
 
@@ -51,12 +52,15 @@ public class ProductDto {
         restaurant.setId(restaurantId);
 
         Product product = new Product();
+        product.setId(id);
         product.setDescription(name);
         product.setPrice(price);
         product.setImagePath(imagePath);
         product.setProductCategory(productCategory);
         product.setRestaurant(restaurant);
-        product.setSale(sale.toEntity());
+        if (Objects.nonNull(sale)) {
+            product.setSale(sale.toEntity());
+        }
         return product;
     }
 }

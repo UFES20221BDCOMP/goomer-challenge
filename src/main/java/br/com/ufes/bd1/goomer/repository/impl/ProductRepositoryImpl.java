@@ -1,19 +1,14 @@
 package br.com.ufes.bd1.goomer.repository.impl;
 
 import br.com.ufes.bd1.goomer.model.Product;
-import br.com.ufes.bd1.goomer.model.ProductSale;
-import br.com.ufes.bd1.goomer.model.Restaurant;
 import br.com.ufes.bd1.goomer.repository.ProductRepository;
-import br.com.ufes.bd1.goomer.repository.TimespanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 public class ProductRepositoryImpl implements ProductRepository {
 
@@ -26,18 +21,26 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Integer save(Product product) {
-        String sql = "insert into product (description, image_path, price, restaurant_id, sale_id, category_id) " +
-                "values (?, ?, ?, ?, ?, (select id from product_category where name = ?)) returning id";
+        String sql;
+        boolean hasSale = Objects.nonNull(product.getSale());
 
-        Integer saleId = Optional.ofNullable(product.getSale()).map(ProductSale::getId).orElse(null);
-
+        if (hasSale) {
+            sql = "insert into product (description, image_path, price, restaurant_id, sale_id, category_id) " +
+                    "values (?1, ?2, ?3, ?4, ?6, (select id from product_category where name = ?5)) returning id";
+        }
+        else {
+            sql = "insert into product (description, image_path, price, restaurant_id, category_id) " +
+                    "values (?1, ?2, ?3, ?4, (select id from product_category where name = ?5)) returning id";
+        }
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter(1, product.getDescription());
         query.setParameter(2, product.getImagePath());
         query.setParameter(3, product.getPrice());
         query.setParameter(4, product.getRestaurant().getId());
-        query.setParameter(5, saleId);
-        query.setParameter(6, product.getProductCategory().getName());
+        query.setParameter(5, product.getProductCategory().getName());
+        if (hasSale) {
+            query.setParameter(6, product.getSale().getId());
+        }
 
         return (Integer) query.getSingleResult();
     }
@@ -47,9 +50,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         String sql =
                 "select * " +
                         "from product p " +
-                        "inner join product_sale s on p.sale = s.id " +
-                        "inner join sale_validity_period v on v.sale = s.id" +
-                        "inner join timespan t on t.id = v.timespan_id " +
+                        "left join product_sale s on p.sale_id = s.id " +
+                        "left join sale_validity_period v on v.sale_id = s.id " +
+                        "left join timespan t on t.id = v.timespan_id " +
                         "where p.id = ?";
 
         Query query = entityManager.createNativeQuery(sql, Product.class);
@@ -62,9 +65,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Collection<Product> getAll(){
         String sql = "select * " +
                 "from product p " +
-                "inner join product_sale s on p.sale = s.id " +
-                "inner join sale_validity_period v on v.sale_id = s.id" +
-                "inner join timespan t on t.id = v.timespan_id ";
+                "left join product_sale s on p.sale_id = s.id " +
+                "left join sale_validity_period v on v.sale_id = s.id " +
+                "left join timespan t on t.id = v.timespan_id";
 
         Query query = entityManager.createNativeQuery(sql, Product.class);
 
@@ -82,15 +85,25 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void update(Product product) {
-        String sql = "update product"+
-                " set description = ?, image_path = ?, price = ?, sale_id = ?, category_id = ?";
+        boolean hasSale = Objects.nonNull(product.getSale());
+        String sql;
 
+        if (hasSale) {
+            sql = "update product set description = ?1, image_path = ?2, price = ?3, sale_id = ?6, " +
+                    "category_id = (select id from product_category where name = ?4) where id = ?5";
+        } else {
+            sql = "update product set description = ?1, image_path = ?2, price = ?3, sale_id = null, " +
+                    "category_id = (select id from product_category where name = ?4) where id = ?5";
+        }
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter(1, product.getDescription());
         query.setParameter(2, product.getImagePath());
         query.setParameter(3, product.getPrice());
-        query.setParameter(4, product.getSale());
-        query.setParameter(5, product.getProductCategory());
+        query.setParameter(4, product.getProductCategory().getName());
+        query.setParameter(5, product.getId());
+        if (hasSale) {
+            query.setParameter(6, product.getSale().getId());
+        }
         query.executeUpdate();
     }
 
