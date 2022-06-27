@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -134,5 +135,14 @@ public class ProductService {
             saleRepository.deleteAllSaleValidityPeriods(sale.getId());
             saleRepository.deleteById(sale.getId());
         }
+    }
+
+    public void deleteAllByRestaurantId(Integer restaurantId) {
+        List<Integer> saleIds = productRepository.deleteAllByRestaurantId(restaurantId);
+
+        saleIds.forEach(saleId -> {
+            saleRepository.deleteAllSaleValidityPeriods(saleId);
+            saleRepository.deleteById(saleId);
+        });
     }
 }

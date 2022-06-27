@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AddressRepository extends org.springframework.data.repository.Repository<Address, Integer> {
 
-    Integer save(Address address);
+    void save(Address address);
 
     void deleteById(int id);
 
-    public void update(Address address);
+    void update(Address address);
 }
