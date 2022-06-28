@@ -30,8 +30,7 @@ public class RestaurantDto {
     private AddressDto address;
 
     @Valid
-    @NotNull(message = "restaurant business hours must be provided")
-    @NotEmpty(message = "restaurant business hours must not be empty")
+    @NotEmpty(message = "restaurant business hours must be provided")
     @JsonProperty("business_hours")
     private List<TimespanDto> businessHours;
 
