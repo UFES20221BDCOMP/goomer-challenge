@@ -48,7 +48,7 @@ Primeiro trabalho prático (T1) da disciplina de Banco de Dados I: implementaç�
 ```mvn clean install spring-boot:run```
 
 ### 4. Pré-cadastrar algumas categorias de produtos
-```docker exec -u postgres goomer_db psql goomerdb postgres -f ./categories.sql```
+```docker exec -u postgres goomer_db psql goomerdb postgres -f ./scripts/categories.sql```
 
 ## Testando a API
 
