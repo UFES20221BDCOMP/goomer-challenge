@@ -1,0 +1,252 @@
+{
+	"info": {
+		"_postman_id": "bc5c31d3-46e8-4601-8f46-34030f954d93",
+		"name": "Goomer_Aryelle_e_MariaJulia",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19094483"
+	},
+	"item": [
+		{
+			"name": "POST /restaurant",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Restaurante do João\",\r\n    \"image_path\": \"C:/images/joao.png\",\r\n    \"address\": {\r\n        \"address_line\": \"Rua dos bobos, 0\",\r\n        \"neighborhood\": \"Inexistente\",\r\n        \"city\": \"Qualquer\",\r\n        \"state\": \"BA\",\r\n        \"zip_code\": \"29300000\"\r\n    },\r\n    \"business_hours\": [\r\n        {\r\n            \"days\": \"monday-friday\",\r\n            \"time\": \"18:00-23:00\"\r\n        },\r\n        {\r\n            \"days\": \"saturday-sunday\",\r\n            \"time\": \"11:00-23:59\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/restaurant",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant"
+					]
+				},
+				"description": "*   Recebe um JSON no corpo da requisição e cria um restaurante\n*   Retorna a URL no header para acessar restaurante criado"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /restaurant",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/restaurant",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant"
+					]
+				},
+				"description": "*   Retorna todos os restaurantes cadastrados no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /restaurant/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/restaurant/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant",
+						"1"
+					]
+				},
+				"description": "*   Retorna dados do restaurante cujo id foi passado na URL da requisição"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /restaurant",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Restaurante do João\",\r\n    \"image_path\": \"C:/images/joao.png\",\r\n    \"address\": {\r\n        \"address_line\": \"Rua dos bobos, 0\",\r\n        \"neighborhood\": \"Inexistente\",\r\n        \"city\": \"Qualquer\",\r\n        \"state\": \"BA\",\r\n        \"zip_code\": \"29300000\"\r\n    },\r\n    \"business_hours\": [\r\n        {\r\n            \"days\": \"monday-friday\",\r\n            \"time\": \"18:00-23:00\"\r\n        },\r\n        {\r\n            \"days\": \"saturday-sunday\",\r\n            \"time\": \"11:00-23:59\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/restaurant",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant"
+					]
+				},
+				"description": "*   Recebe todos os dados de um restaurante em formato JSON no corpo da requisição, com zero ou mais campos atualizados e o atualiza (caso exista)"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /restaurant/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/restaurant/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant",
+						"1"
+					]
+				},
+				"description": "*   Deleta restaurante cujo id foi passado na URL\n*   Obs.: Ao deletar um restaurante, também são apagados todos os seus produtos"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /restaurant/{id}/menu",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/restaurant/1/menu",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"restaurant",
+						"1",
+						"menu"
+					]
+				},
+				"description": "*   Retorna todos os produtos do restaurante cujo id foi passado na URL em formato JSON"
+			},
+			"response": []
+		},
+		{
+			"name": "POST /product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Cerveja Brahma\",\r\n    \"price\": 9.00,\r\n    \"image_path\": \"C:/images/brahma.png\",\r\n    \"category\": \"BEBIDAS\",\r\n    \"restaurant_id\": 1,\r\n    \"sale\": {\r\n        \"description\": \"Litrão pela metade do preço\",\r\n        \"price\": 4.50,\r\n        \"sales_hours\": [\r\n            {\r\n                \"days\": \"monday-wednesday\",\r\n                \"time\": \"18:00-20:00\"\r\n            }\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"product"
+					]
+				},
+				"description": "*   Recebe um JSON no corpo da requisição e cria um produto\n*   Retorna, no header, a URL para acessar o novo produto"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /product/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/product/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"product",
+						"1"
+					]
+				},
+				"description": "*   Retorna produto cujo id foi passado na URL"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Cerveja Brahma\",\r\n    \"price\": 9.00,\r\n    \"image_path\": \"C:/images/brahma.png\",\r\n    \"category\": \"BEBIDAS\",\r\n    \"restaurant_id\": 1,\r\n    \"sale\": {\r\n        \"description\": \"Litrão pela metade do preço\",\r\n        \"price\": 4.50,\r\n        \"sales_hours\": [\r\n            {\r\n                \"days\": \"monday-wednesday\",\r\n                \"time\": \"19:00-20:30\"\r\n            },\r\n            {\r\n                \"days\": \"friday-saturday\",\r\n                \"time\": \"19:00-20:00\"\r\n            }\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"product"
+					]
+				},
+				"description": "*   Recebe um JSON no corpo da requisição com todos os dados de um produto, com zero ou mais atributos modificados"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /product/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/product/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"product",
+						"1"
+					]
+				},
+				"description": "*   Deleta produto cujo id foi especificado na URL"
+			},
+			"response": []
+		}
+	]
+}

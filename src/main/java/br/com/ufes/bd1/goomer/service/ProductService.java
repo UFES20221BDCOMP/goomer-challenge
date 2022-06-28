@@ -67,6 +67,10 @@ public class ProductService {
         return productRepository.getAll();
     }
 
+    public Collection<Product> getByRestaurantId(int id) {
+        return productRepository.getByRestaurantId(id);
+    }
+
     @Transactional
     public void update(Product updated) {
         if (Objects.isNull(updated.getId())) {
