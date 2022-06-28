@@ -2,10 +2,10 @@ package br.com.ufes.bd1.goomer.service;
 
 import br.com.ufes.bd1.goomer.exception.ProvidedDataInconsistencyException;
 import br.com.ufes.bd1.goomer.model.Address;
+import br.com.ufes.bd1.goomer.model.Product;
 import br.com.ufes.bd1.goomer.model.Restaurant;
 import br.com.ufes.bd1.goomer.model.Timespan;
 import br.com.ufes.bd1.goomer.repository.AddressRepository;
-import br.com.ufes.bd1.goomer.repository.ProductRepository;
 import br.com.ufes.bd1.goomer.repository.RestaurantRepository;
 import br.com.ufes.bd1.goomer.repository.TimespanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +59,11 @@ public class RestaurantService {
 
     public Collection<Restaurant> getAll() {
         return restaurantRepository.getAll();
+    }
+
+    public Collection<Product> getMenu(int id) {
+        restaurantRepository.getById(id);
+        return productService.getByRestaurantId(id);
     }
 
     @Transactional
