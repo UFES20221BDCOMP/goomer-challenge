@@ -17,7 +17,7 @@ public class TimespanDto {
     @JsonProperty("days")
     private String days;
 
-    @TimeIntervalFormat(message = "invalid format --expected: 'HH:mm-HH:mm'")
+    @TimeIntervalFormat(message = "invalid format --expected: 'HH:mm-HH:mm' with at least a 15-minute gap between start and end")
     @NotBlank(message = "daily timespan must be provided")
     @JsonProperty("time")
     private String time;

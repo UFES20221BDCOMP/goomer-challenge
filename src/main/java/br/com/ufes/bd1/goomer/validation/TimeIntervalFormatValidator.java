@@ -11,8 +11,16 @@ public class TimeIntervalFormatValidator implements ConstraintValidator<TimeInte
     public boolean isValid(String value, ConstraintValidatorContext context) {
         try {
             String[] timeArray = value.split("-");
-            LocalTime.parse(timeArray[0], DateTimeFormatter.ofPattern("HH:mm"));
-            LocalTime.parse(timeArray[1], DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime timeStart = LocalTime.parse(timeArray[0], DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime timeEnd = LocalTime.parse(timeArray[1], DateTimeFormatter.ofPattern("HH:mm"));
+
+            if (timeStart.isBefore(timeEnd)) {
+                if (timeStart.plusMinutes(15).isAfter(timeEnd)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
         catch (Exception e) {
             return false;
