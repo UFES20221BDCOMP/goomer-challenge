@@ -1,0 +1,23 @@
+version: '3.5'
+services:
+  database:
+    image: postgres
+    container_name: goomer_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: goomerdb
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./scripts/categories.sql:/scripts/categories.sql
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8181:8080"
